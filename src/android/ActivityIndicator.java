@@ -10,6 +10,7 @@ public class ActivityIndicator extends CordovaPlugin {
 
 	private AndroidProgressHUD activityIndicator = null;
 	private String text = null;
+	private boolean showLock = false;
 
 	@Override
 	public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -33,10 +34,12 @@ public class ActivityIndicator extends CordovaPlugin {
 	 */
 	public void show(String text) {
 		this.text = text;
+		this.showLock = true;
 
 		cordova.getActivity().runOnUiThread(new Runnable() {
 			public void run() {
-				activityIndicator = AndroidProgressHUD.show(ActivityIndicator.this.cordova.getActivity(), ActivityIndicator.this.text, true,true,null);
+				if (ActivityIndicator.this.showLock)
+					activityIndicator = AndroidProgressHUD.show(ActivityIndicator.this.cordova.getActivity(), ActivityIndicator.this.text, true,true,null);
 			}
 		});
 	}
@@ -48,6 +51,8 @@ public class ActivityIndicator extends CordovaPlugin {
 		if (activityIndicator != null) {
 			activityIndicator.dismiss();
 			activityIndicator = null;
+		} else {
+			this.showLock = false;
 		}
 	}
 }
